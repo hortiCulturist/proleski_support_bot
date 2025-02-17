@@ -1,0 +1,48 @@
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+
+
+
+def admin_main_menu():
+    button_1 = KeyboardButton(text="Добавить вопрос")
+    button_2 = KeyboardButton(text="Удалить вопрос")
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [button_1, button_2],
+        ],
+        resize_keyboard=True
+    )
+
+    return keyboard
+
+
+def admin_no_translate():
+    button_1 = KeyboardButton(text="Нет перевода")
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [button_1],
+        ],
+        resize_keyboard=True,
+        input_field_placeholder="Выберите язык..."
+    )
+
+    return keyboard
+
+
+def faq_id_keyboard(faq_ids):
+    button_main = KeyboardButton(text="Главное меню")
+
+    sorted_ids = sorted(faq_ids, key=int)
+
+    rows = [sorted_ids[i:i+2] for i in range(0, len(sorted_ids), 2)]
+    rows = [[KeyboardButton(text=str(faq_id)) for faq_id in row] for row in rows]
+
+    rows.append([button_main])
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=rows,
+        resize_keyboard=True,
+        input_field_placeholder="Выберите ID..."
+    )
+    return keyboard
