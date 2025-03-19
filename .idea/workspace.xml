@@ -4,35 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/proleski_support_bot.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/__main__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/admin/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/admin/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/user/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/db/user/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/admin/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/admin/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/user/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/handlers/user/base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/markups/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/markups/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/markups/user.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/misc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/states/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/states/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/states/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bot_app/states/user.py" afterDir="false" />
+    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="update V2">
+      <change afterPath="$PROJECT_DIR$/bot_app/db/translation_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/db/user/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/user/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/handlers/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/handlers/user/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/user/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/markups/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/markups/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/misc.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,31 +38,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/yurii/Documents/python_projects/work_wallet_bot_private",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yurii/Documents/python_projects/work_wallet_bot_private&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.180" />
-        <option value="bundled-python-sdk-85c76a3b01b3-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.180" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.25659.43" />
+        <option value="bundled-python-sdk-181015f7ab06-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.25659.43" />
       </set>
     </attachedChunks>
   </component>
@@ -106,11 +86,42 @@
       <workItem from="1739363163012" duration="7508000" />
       <workItem from="1739542586119" duration="1979000" />
       <workItem from="1739625580854" duration="618000" />
-      <workItem from="1739801849114" duration="7955000" />
+      <workItem from="1739801849114" duration="10366000" />
+      <workItem from="1739878681729" duration="983000" />
+      <workItem from="1739879678105" duration="3668000" />
+      <workItem from="1741270768046" duration="3691000" />
+      <workItem from="1741689107823" duration="2286000" />
+      <workItem from="1741691756438" duration="226000" />
+      <workItem from="1741762282494" duration="8153000" />
+      <workItem from="1742390019153" duration="8695000" />
     </task>
+    <task id="LOCAL-00001" summary="update V2">
+      <option name="closed" value="true" />
+      <created>1739811937506</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739811937506</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update V2" />
+    <option name="LAST_COMMIT_MESSAGE" value="update V2" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/bot_app/markups/user.py</url>
+          <line>41</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
