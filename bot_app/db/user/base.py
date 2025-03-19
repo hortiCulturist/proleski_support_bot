@@ -37,6 +37,15 @@ class UserDatabase:
         finally:
             await con.ensure_closed()
 
+    @staticmethod
+    async def edit_language(user_id: int, language: str):
+        con, cur = await create_dict_con()
+        try:
+            await cur.execute('UPDATE user SET language = %s WHERE user_id = %s', (language, user_id))
+            await con.commit()
+        finally:
+            await con.ensure_closed()
+
 
 # async def add_user( user_id: int, name: str, username: str):
 #     con, cur = await create_con()

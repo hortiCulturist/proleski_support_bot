@@ -2,65 +2,140 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 
-def main_menu_keyboard():
-    button_1 = KeyboardButton(text="Описание тренажёров")
-    button_2 = KeyboardButton(text="Описание дополнительных опций")
-    button_3 = KeyboardButton(text="FAQ")
-    button_4 = KeyboardButton(text="Другие вопросы")
+def main_menu_keyboard(lang: str):
+    buttons = {
+        "ru": [
+            KeyboardButton(text="Описание тренажёров"),
+            KeyboardButton(text="Описание дополнительных опций"),
+            KeyboardButton(text="FAQ"),
+            KeyboardButton(text="Другие вопросы"),
+            KeyboardButton(text="Изменить язык")
+        ],
+        "en": [
+            KeyboardButton(text="Simulators description"),
+            KeyboardButton(text="Description of additional options"),
+            KeyboardButton(text="FAQ"),
+            KeyboardButton(text="Other questions"),
+            KeyboardButton(text="Change language")
+        ]
+    }
+
+
+    placeholders = {
+        "ru": "Введите ваш вопрос...",
+        "en": "Type your question..."
+    }
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [button_1, button_2],
-            [button_3, button_4],
+            [buttons[lang][0], buttons[lang][1]],
+            [buttons[lang][2], buttons[lang][3]],
+            [buttons[lang][4]],
         ],
         resize_keyboard=True,
-        input_field_placeholder="Введите ваш вопрос..."
+        input_field_placeholder=placeholders.get(lang)
     )
 
     return keyboard
 
 
-def back_and_support():
-    button_1 = KeyboardButton(text="☎️Связь с менеджером")
-    button_2 = KeyboardButton(text="📞Оставить номер телефона")
-    button_3 = KeyboardButton(text="Главное меню")
+def back_and_support(lang: str):
+    buttons = {
+        "ru": [
+            KeyboardButton(text="☎️Связь с менеджером"),
+            KeyboardButton(text="📞Оставить номер телефона"),
+            KeyboardButton(text="Главное меню")
+        ],
+        "en": [
+            KeyboardButton(text="☎️Contact the manager"),
+            KeyboardButton(text="📞Leave phone number"),
+            KeyboardButton(text="Main menu")
+        ]
+    }
+
+    placeholders = {
+        "ru": "Введите ваш вопрос...",
+        "en": "Type your question..."
+    }
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [button_1],
-            [button_2],
-            [button_3],
+            [buttons[lang][0]],
+            [buttons[lang][1]],
+            [buttons[lang][2]],
         ],
         resize_keyboard=True,
-        input_field_placeholder="Введите ваш вопрос..."
+        input_field_placeholder=placeholders.get(lang)
     )
 
     return keyboard
 
-def phone_request_keyboard():
-    button_phone = KeyboardButton(text="Отправить номер", request_contact=True)
-    button_main = KeyboardButton(text="Главное меню")
+
+def phone_request_keyboard(lang: str):
+    buttons = {
+        "ru": [
+            KeyboardButton(text="Отправить номер", request_contact=True),
+            KeyboardButton(text="Главное меню")
+        ],
+        "en": [
+            KeyboardButton(text="Send number", request_contact=True),
+            KeyboardButton(text="Main menu")
+        ]
+    }
+
+    placeholders = {
+        "ru": "Нажмите кнопку для отправки номера...",
+        "en": "Click the button to send the number..."
+    }
 
     keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [button_phone],
-            [button_main]
-        ],
+        keyboard=[[buttons[lang][0], buttons[lang][1]]],
         resize_keyboard=True,
-        input_field_placeholder="Нажмите кнопку для отправки номера"
+        input_field_placeholder=placeholders.get(lang)
     )
 
     return keyboard
 
 
-def go_to_main_manu():
-    button_1 = KeyboardButton(text="Главное меню")
+def go_to_main_manu(lang: str):
+    buttons = {
+        "ru": [
+            KeyboardButton(text="Главное меню")
+        ],
+        "en": [
+            KeyboardButton(text="Main menu")
+        ]
+    }
 
     keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [button_1],
-        ],
+        keyboard=[[buttons[lang][0]]],
         resize_keyboard=True
+    )
+
+    return keyboard
+
+
+def language_choice(lang: str):
+    buttons = {
+        "ru": [
+            KeyboardButton(text="🇬🇧 Английский"),
+            KeyboardButton(text="Русский")
+        ],
+        "en": [
+            KeyboardButton(text="🇬🇧 English"),
+            KeyboardButton(text="Russian")
+        ]
+    }
+
+    placeholders = {
+        "ru": "Выберите язык ниже...",
+        "en": "Choose your language below..."
+    }
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[[buttons[lang][0], buttons[lang][1]]],
+        resize_keyboard=True,
+        input_field_placeholder=placeholders.get(lang)
     )
 
     return keyboard

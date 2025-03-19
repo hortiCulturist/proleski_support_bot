@@ -1,20 +1,22 @@
 from aiogram import types, F
 from rapidfuzz import process
 
-from bot_app.config import FAQ
 from bot_app.db.admin.base import FAQDatabase
+from bot_app.db.translation_db import TranslationDB
 from bot_app.markups.user import back_and_support
 from bot_app.misc import router
 
 
-@router.message(F.text == "Описание тренажёров")
+@router.message(lambda message: message.text in ["Описание тренажёров", "Simulators description"])
 async def button_action(message: types.Message):
-    await message.answer("Здесь изменяемый текст 'Описание тренажёров'", reply_markup=back_and_support())
+    await message.answer("Здесь изменяемый текст 'Описание тренажёров'",
+                         reply_markup=back_and_support(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
-@router.message(F.text == "Описание дополнительных опций")
+@router.message(lambda message: message.text in ["Описание дополнительных опций", "Description of additional options"])
 async def button_action(message: types.Message):
-    await message.answer("Здесь изменяемый текст 'Описание дополнительных опций'", reply_markup=back_and_support())
+    await message.answer("Здесь изменяемый текст 'Описание дополнительных опций'",
+                         reply_markup=back_and_support(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
 @router.message()
@@ -39,7 +41,8 @@ async def answer_question(message: types.Message):
         elif result[0] in faq_dict and best_match['question_en'].lower() == result[0]:
             await message.answer(best_match['answer_en'])
     else:
-        await message.answer("Извините, я не понял ваш вопрос. Попробуйте сформулировать иначе.")
+        await message.answer(await TranslationDB.get_translation(message.from_user.id,
+                                                                 "question_not_understood"))
 # @router.message()
 # async def answer_question(message: types.Message):
 #     user_question = message.text.strip().lower()
