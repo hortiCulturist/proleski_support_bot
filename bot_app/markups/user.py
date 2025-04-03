@@ -89,7 +89,10 @@ def phone_request_keyboard(lang: str):
     }
 
     keyboard = ReplyKeyboardMarkup(
-        keyboard=[[buttons[lang][0], buttons[lang][1]]],
+        keyboard=[
+            [buttons[lang][0]],
+            [buttons[lang][1]]
+        ],
         resize_keyboard=True,
         input_field_placeholder=placeholders.get(lang)
     )

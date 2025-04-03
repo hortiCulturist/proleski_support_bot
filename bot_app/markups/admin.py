@@ -5,10 +5,15 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def admin_main_menu():
     button_1 = KeyboardButton(text="Добавить вопрос")
     button_2 = KeyboardButton(text="Удалить вопрос")
+    button_3 = KeyboardButton(text="Изменить FAQ")
+    button_4 = KeyboardButton(text="Изменить 'Другие вопросы'")
+    button_5 = KeyboardButton(text="Загрузить вопросы/ответы Excel")
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [button_1, button_2],
+            [button_1, button_3],
+            [button_2, button_4],
+            [button_5]
         ],
         resize_keyboard=True
     )
@@ -25,6 +30,19 @@ def admin_no_translate():
         ],
         resize_keyboard=True,
         input_field_placeholder="Выберите язык..."
+    )
+
+    return keyboard
+
+
+def admin_back_menu():
+    button_1 = KeyboardButton(text="Главное меню")
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [button_1],
+        ],
+        resize_keyboard=True
     )
 
     return keyboard

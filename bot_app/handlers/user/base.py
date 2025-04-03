@@ -19,7 +19,7 @@ async def button_action(message: types.Message):
                          reply_markup=back_and_support(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
-@router.message()
+@router.message(F.text)
 async def answer_question(message: types.Message):
     user_question = message.text.strip().lower()
 
@@ -43,6 +43,11 @@ async def answer_question(message: types.Message):
     else:
         await message.answer(await TranslationDB.get_translation(message.from_user.id,
                                                                  "question_not_understood"))
+
+
+@router.message(~F.text)
+async def answer_question_error(message: types.Message):
+    pass
 # @router.message()
 # async def answer_question(message: types.Message):
 #     user_question = message.text.strip().lower()

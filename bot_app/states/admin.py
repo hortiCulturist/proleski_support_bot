@@ -10,3 +10,15 @@ class AddFaq(StatesGroup):
 
 class DeleteFaq(StatesGroup):
     select_id = State()
+
+
+class AddXlsx(StatesGroup):
+    add = State()
+
+class UpdateFaqText(StatesGroup):
+    admin_text1 = State()
+    admin_text2 = State()
+
+class UpdateOtherIssuesText(StatesGroup):
+    admin_text1 = State()
+    admin_text2 = State()

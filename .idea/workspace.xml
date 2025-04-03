@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="update V2">
-      <change afterPath="$PROJECT_DIR$/bot_app/db/translation_db.py" afterDir="false" />
+    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="update V3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot_app/db/user/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/user/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/db/admin/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/admin/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/db/translation_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/translation_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/handlers/admin/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/admin/base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/handlers/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/handlers/user/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/user/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/markups/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/markups/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/markups/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/markups/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot_app/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/misc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot_app/states/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/states/admin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,31 +40,62 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/yurii/Documents/python_projects/work_wallet_bot_private&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.xlsx_test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/yurii/Documents/python_projects/work_wallet_bot_private",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
+  <component name="RunManager">
+    <configuration name="xlsx_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="proleski_support_bot" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xlsx_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.xlsx_test" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.25659.43" />
-        <option value="bundled-python-sdk-181015f7ab06-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.25659.43" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29" />
+        <option value="bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29" />
       </set>
     </attachedChunks>
   </component>
@@ -93,7 +126,11 @@
       <workItem from="1741689107823" duration="2286000" />
       <workItem from="1741691756438" duration="226000" />
       <workItem from="1741762282494" duration="8153000" />
-      <workItem from="1742390019153" duration="8695000" />
+      <workItem from="1742390019153" duration="8947000" />
+      <workItem from="1743422353593" duration="5028000" />
+      <workItem from="1743524266236" duration="2647000" />
+      <workItem from="1743598833710" duration="6605000" />
+      <workItem from="1743683810111" duration="12563000" />
     </task>
     <task id="LOCAL-00001" summary="update V2">
       <option name="closed" value="true" />
@@ -103,7 +140,23 @@
       <option name="project" value="LOCAL" />
       <updated>1739811937506</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="update V3">
+      <option name="closed" value="true" />
+      <created>1742401773936</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742401773936</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update V3">
+      <option name="closed" value="true" />
+      <created>1742401791507</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1742401791507</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -111,7 +164,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update V2" />
-    <option name="LAST_COMMIT_MESSAGE" value="update V2" />
+    <MESSAGE value="update V3" />
+    <option name="LAST_COMMIT_MESSAGE" value="update V3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -123,5 +177,8 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/proleski_support_bot$xlsx_test.coverage" NAME="xlsx_test Coverage Results" MODIFIED="1743693271420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

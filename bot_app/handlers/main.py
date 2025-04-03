@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from aiogram import types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -5,6 +7,7 @@ from aiogram.types import ReplyKeyboardRemove
 
 from bot_app import config
 from bot_app.config import ADMIN_ID
+from bot_app.db.admin.base import ExcelOperation
 from bot_app.db.translation_db import TranslationDB
 from bot_app.db.user.base import UserDatabase
 from bot_app.markups.admin import admin_main_menu
@@ -15,17 +18,22 @@ from bot_app.states.user import UserInfo, UserPhone
 
 @router.message(Command("start"))
 async def start_handler(message: types.Message):
-    await TranslationDB.get_user_language_code(message.from_user.id)
+    if await UserDatabase.get_user(message.from_user.id):
+        await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
+                             reply_markup=main_menu_keyboard(
+                                 await TranslationDB.get_user_language_code(message.from_user.id)))
+    else:
+        await UserDatabase.add_user(message.from_user.id, message.from_user.full_name, message.from_user.username)
+        await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
+                             reply_markup=language_choice(
+                                 await TranslationDB.get_user_language_code(message.from_user.id)))
+
+
+@router.message(Command("admin"))
+async def start_admin_handler(message: types.Message):
     if message.from_user.id == config.ADMIN_ID:
         await message.answer("Привет! Я готов к работе босс.", reply_markup=admin_main_menu())
         return
-    if await UserDatabase.add_user(message.from_user.id, message.from_user.full_name, message.from_user.username):
-        await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
-                             reply_markup=language_choice(await TranslationDB.get_user_language_code(message.from_user.id)))
-    else:
-        await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
-                             reply_markup=main_menu_keyboard(await TranslationDB.get_user_language_code(message.from_user.id)))
-
 
 
 @router.message(lambda message: message.text in ["Изменить язык", "Change language"])
@@ -63,11 +71,33 @@ async def select_channel(message: types.Message, state: FSMContext):
     await state.set_state(UserInfo.user_issue)
 
 
-@router.message(UserInfo.user_issue)
+@router.message(UserInfo.user_issue, F.text)
 async def select_channel(message: types.Message, state: FSMContext):
-    await bot.send_message(chat_id=ADMIN_ID, text=message.text)
+    if len(message.text) > 4000:
+        await message.answer(await TranslationDB.get_translation(message.from_user.id, "large_message"),
+                             reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))
+        await state.clear()
+        return
+    date_now = datetime.now()
+    date = date_now.strftime("%Y-%m-%d %H:%M:%S")
+    user = message.from_user
+    username = f"@{user.username}" if user.username else "Не указан"
+    full_name = f"{user.first_name} {user.last_name}" if user.first_name else "Не указано"
+
+    text = (f'🆔 ID: {message.from_user.id}\n'
+            f'👤 Имя: {full_name}\n'
+            f'📲 Username: {username}\n'
+            f'📨 Сообщение:\n{message.text}\n\n'
+            f'⏳ Дата: {date}')
+    await bot.send_message(chat_id=ADMIN_ID, text=text)
     await state.clear()
     await message.answer(await TranslationDB.get_translation(message.from_user.id, "thanks_for_question"),
+                         reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))
+
+
+@router.message(UserInfo.user_issue, ~F.text)
+async def select_channel(message: types.Message):
+    await message.answer(await TranslationDB.get_translation(message.from_user.id, "media_type_error"),
                          reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
@@ -82,20 +112,17 @@ async def select_channel(message: types.Message, state: FSMContext):
 async def select_channel(message: types.Message, state: FSMContext):
     user = message.from_user
     phone_number = message.contact.phone_number if message.contact else "Не указан"
-    print(type(phone_number))
-    print(phone_number)
     username = f"@{user.username}" if user.username else "Не указан"
     full_name = f"{user.first_name} {user.last_name}" if user.first_name else "Не указано"
     await state.clear()
     await UserDatabase.save_user_phone(phone_number, message.from_user.id)
 
-    text = f"""
-    📝 Отчет о пользователе:
-    - 🆔 ID пользователя: {user.id}
-    - 👤 Имя: {full_name}
-    - 📲 Юзернейм: {username}
-    - 📞 Номер телефона: {phone_number}
-    """
+    text = (f'📝 Отчет о пользователе:\n\n'
+            f'🆔 ID пользователя: {user.id}\n'
+            f'👤 Имя: {full_name}\n'
+            f'📲 Юзернейм: {username}\n'
+            f'📞 Номер телефона: {phone_number}')
+
     await bot.send_message(chat_id=ADMIN_ID, text=text)
     await message.answer(await TranslationDB.get_translation(message.from_user.id, "contact_saved"),
                          reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))

@@ -1,19 +1,22 @@
+import asyncio
+import os
+
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import ReplyKeyboardRemove
 
-from bot_app.config import ADMIN_ID
-from bot_app.db.admin.base import FAQDatabase
-from bot_app.markups.admin import admin_main_menu, admin_no_translate, faq_id_keyboard
-from bot_app.misc import router
-from bot_app.states.admin import AddFaq, DeleteFaq
+from bot_app.config import ADMIN_ID, FILES_PATH
+from bot_app.db.admin.base import FAQDatabase, ExcelOperation
+from bot_app.db.translation_db import TranslationDB
+from bot_app.markups.admin import admin_main_menu, faq_id_keyboard, admin_back_menu
+from bot_app.misc import router, bot
+from bot_app.states.admin import AddFaq, DeleteFaq, AddXlsx, UpdateFaqText, UpdateOtherIssuesText
 
 
 @router.message(F.text == "Добавить вопрос")
 async def add_questions(message: types.Message, state: FSMContext):
     if message.from_user.id != ADMIN_ID:
         return
-    await message.answer('Введите вопрос/ы на русском языке:', reply_markup=ReplyKeyboardRemove())
+    await message.answer('Введите вопрос/ы на русском языке:', reply_markup=admin_back_menu())
     await state.set_state(AddFaq.add_questions1)
 
 
@@ -113,6 +116,110 @@ async def delete_questions(message: types.Message, state: FSMContext):
                              reply_markup=faq_id_keyboard(
                                  set(i['faq_id'] for i in await FAQDatabase.get_all_questions())))
         await state.set_state(DeleteFaq.select_id)
+
+
+
+@router.message(F.text == "Загрузить вопросы/ответы Excel")
+async def add_xlsx_data(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    await message.answer("Отправьте файл xlsx:", reply_markup=admin_back_menu())
+    await state.set_state(AddXlsx.add)
+
+
+@router.message(AddXlsx.add, lambda message: message.document is not None)
+async def xlsx_data(message: types.Message, state: FSMContext):
+    if message.document:
+        document = message.document
+
+        file_name = document.file_name
+        if not file_name.lower().endswith('.xlsx'):
+            await message.answer("Пожалуйста, отправьте файл с расширением .xlsx")
+            return
+
+        file_id = document.file_id
+
+        file = await bot.get_file(file_id)
+        save_path = os.path.join(FILES_PATH, file_name)
+
+        await bot.download_file(file.file_path, save_path)
+
+        await message.answer(f"Файл <{file_name}> успешно загружен, идет обработка ✅")
+        if await ExcelOperation.add_xlsx_data(file_name):
+            await asyncio.sleep(2)
+            await message.answer(f"Данные успешно обновлены ✅", reply_markup=admin_main_menu())
+        else:
+            await message.answer(f"Ошибка❌")
+        await state.clear()
+    await state.clear()
+
+
+@router.message(F.text == "Изменить FAQ")
+async def edit_faq(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    await message.answer(f"Введите текст на русском языке:")
+    await state.set_state(UpdateFaqText.admin_text1)
+
+
+@router.message(UpdateFaqText.admin_text1)
+async def edit_faq_state(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    await state.update_data(ru_text=message.text)
+    await message.answer('Добавлено!\nВведите текст на английском языке:')
+    await state.set_state(UpdateFaqText.admin_text2)
+
+
+@router.message(UpdateFaqText.admin_text2)
+async def edit_faq_state(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    data = await state.get_data()
+    ru_text = data['ru_text']
+    en_text = message.text
+    await TranslationDB.add_admin_translation("FAQ", ru_text, en_text)
+    await message.answer('Добавлено!\nТекст изменен.', reply_markup=admin_main_menu())
+    await state.clear()
+
+
+@router.message(F.text == "Изменить 'Другие вопросы'")
+async def edit_other_issues(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    await message.answer(f"Введите текст на русском языке:")
+    await state.set_state(UpdateOtherIssuesText.admin_text1)
+
+
+@router.message(UpdateOtherIssuesText.admin_text1)
+async def edit_other_issues_state(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    await state.update_data(ru_text=message.text)
+    await message.answer('Добавлено!\nВведите текст на английском языке:')
+    await state.set_state(UpdateOtherIssuesText.admin_text2)
+
+
+@router.message(UpdateOtherIssuesText.admin_text2)
+async def edit_other_issues_state(message: types.Message, state: FSMContext):
+    if message.from_user.id != ADMIN_ID:
+        return
+    data = await state.get_data()
+    ru_text = data['ru_text']
+    en_text = message.text
+    await TranslationDB.add_admin_translation("other_issues", ru_text, en_text)
+    await message.answer('Добавлено!\nТекст изменен.', reply_markup=admin_main_menu())
+    await state.clear()
+
+
+
+
+
+
+
+
+
+
 
 
 
