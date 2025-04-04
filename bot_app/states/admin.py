@@ -22,3 +22,8 @@ class UpdateFaqText(StatesGroup):
 class UpdateOtherIssuesText(StatesGroup):
     admin_text1 = State()
     admin_text2 = State()
+
+class EditText(StatesGroup):
+    edit_t1 = State()
+    edit_t2 = State()
+    edit_t3 = State()

@@ -5,14 +5,15 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def admin_main_menu():
     button_1 = KeyboardButton(text="Добавить вопрос")
     button_2 = KeyboardButton(text="Удалить вопрос")
-    button_3 = KeyboardButton(text="Изменить FAQ")
-    button_4 = KeyboardButton(text="Изменить 'Другие вопросы'")
+    button_3 = KeyboardButton(text="Изменить текст")
+    # button_3 = KeyboardButton(text="Изменить FAQ")
+    # button_4 = KeyboardButton(text="Изменить 'Другие вопросы'")
     button_5 = KeyboardButton(text="Загрузить вопросы/ответы Excel")
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [button_1, button_3],
-            [button_2, button_4],
+            [button_1, button_2],
+            [button_3],
             [button_5]
         ],
         resize_keyboard=True
@@ -36,7 +37,7 @@ def admin_no_translate():
 
 
 def admin_back_menu():
-    button_1 = KeyboardButton(text="Главное меню")
+    button_1 = KeyboardButton(text="Меню")
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
@@ -49,7 +50,7 @@ def admin_back_menu():
 
 
 def faq_id_keyboard(faq_ids):
-    button_main = KeyboardButton(text="Главное меню")
+    button_main = KeyboardButton(text="Меню")
 
     sorted_ids = sorted(faq_ids, key=int)
 
@@ -63,4 +64,23 @@ def faq_id_keyboard(faq_ids):
         resize_keyboard=True,
         input_field_placeholder="Выберите ID..."
     )
+    return keyboard
+
+
+def edit_text_button():
+    button_1 = KeyboardButton(text="Описание тренажёров")
+    button_2 = KeyboardButton(text="Описание дополнительных опций")
+    button_3 = KeyboardButton(text="FAQ")
+    button_4 = KeyboardButton(text="Другие вопросы")
+    button_5 = KeyboardButton(text="Меню")
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [button_1, button_2],
+            [button_3, button_4],
+            [button_5]
+        ],
+        resize_keyboard=True
+    )
+
     return keyboard

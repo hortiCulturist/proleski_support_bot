@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="update V3">
+    <list default="true" id="e489b6ce-71db-4ca2-b9b7-243c1c7c87ab" name="Changes" comment="update V4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot_app/db/admin/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/admin/base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/db/translation_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/db/translation_db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/handlers/admin/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/admin/base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/handlers/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/handlers/user/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/handlers/user/base.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/markups/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/markups/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot_app/markups/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/markups/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bot_app/states/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_app/states/admin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +29,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;hortiCulturist&quot;
+  }
+}</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="9be1d2c2-e95c-4650-9eb6-976c00422360" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/hortiCulturist/proleski_support_bot.git&quot;,
+    &quot;accountId&quot;: &quot;9be1d2c2-e95c-4650-9eb6-976c00422360&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -40,27 +53,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.xlsx_test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/yurii/Documents/python_projects/work_wallet_bot_private",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.xlsx_test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yurii/Documents/python_projects/work_wallet_bot_private&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="xlsx_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="proleski_support_bot" />
@@ -130,7 +143,9 @@
       <workItem from="1743422353593" duration="5028000" />
       <workItem from="1743524266236" duration="2647000" />
       <workItem from="1743598833710" duration="6605000" />
-      <workItem from="1743683810111" duration="12563000" />
+      <workItem from="1743683810111" duration="13287000" />
+      <workItem from="1743705307525" duration="20000" />
+      <workItem from="1743759423123" duration="3767000" />
     </task>
     <task id="LOCAL-00001" summary="update V2">
       <option name="closed" value="true" />
@@ -156,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742401791507</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="update V4">
+      <option name="closed" value="true" />
+      <created>1743703671834</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1743703671834</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -165,7 +188,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update V2" />
     <MESSAGE value="update V3" />
-    <option name="LAST_COMMIT_MESSAGE" value="update V3" />
+    <MESSAGE value="update V4" />
+    <option name="LAST_COMMIT_MESSAGE" value="update V4" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

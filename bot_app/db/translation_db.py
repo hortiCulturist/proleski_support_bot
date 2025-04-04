@@ -1,4 +1,4 @@
-from bot_app.db.main import create_dict_con, create_con
+from bot_app.db.main import create_dict_con
 
 class TranslationDB:
     @staticmethod

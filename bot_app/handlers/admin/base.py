@@ -3,13 +3,14 @@ import os
 
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
+from aiogram.types import ReplyKeyboardRemove
 
-from bot_app.config import ADMIN_ID, FILES_PATH
+from bot_app.config import ADMIN_ID, FILES_PATH, sections_mapping
 from bot_app.db.admin.base import FAQDatabase, ExcelOperation
 from bot_app.db.translation_db import TranslationDB
-from bot_app.markups.admin import admin_main_menu, faq_id_keyboard, admin_back_menu
+from bot_app.markups.admin import admin_main_menu, faq_id_keyboard, admin_back_menu, edit_text_button
 from bot_app.misc import router, bot
-from bot_app.states.admin import AddFaq, DeleteFaq, AddXlsx, UpdateFaqText, UpdateOtherIssuesText
+from bot_app.states.admin import AddFaq, DeleteFaq, AddXlsx, UpdateFaqText, UpdateOtherIssuesText, EditText
 
 
 @router.message(F.text == "Добавить вопрос")
@@ -154,62 +155,67 @@ async def xlsx_data(message: types.Message, state: FSMContext):
     await state.clear()
 
 
-@router.message(F.text == "Изменить FAQ")
-async def edit_faq(message: types.Message, state: FSMContext):
+@router.message(F.text == "Изменить текст")
+async def edit_text_handle(message: types.Message, state: FSMContext):
     if message.from_user.id != ADMIN_ID:
         return
-    await message.answer(f"Введите текст на русском языке:")
-    await state.set_state(UpdateFaqText.admin_text1)
+    await message.answer(f"Выберите пункт в котором нужно изменить текст:", reply_markup=edit_text_button())
+    await state.set_state(EditText.edit_t1)
 
 
-@router.message(UpdateFaqText.admin_text1)
-async def edit_faq_state(message: types.Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
-        return
+@router.message(EditText.edit_t1)
+async def edit_text_state(message: types.Message, state: FSMContext):
+    button_code = sections_mapping.get(message.text)
+    await state.update_data(button_code=button_code)
+    await message.answer(f"Введите текст на русском языке:", reply_markup=ReplyKeyboardRemove())
+    await state.set_state(EditText.edit_t2)
+
+
+@router.message(EditText.edit_t2)
+async def edit_text_state(message: types.Message, state: FSMContext):
     await state.update_data(ru_text=message.text)
     await message.answer('Добавлено!\nВведите текст на английском языке:')
-    await state.set_state(UpdateFaqText.admin_text2)
+    await state.set_state(EditText.edit_t3)
 
 
-@router.message(UpdateFaqText.admin_text2)
-async def edit_faq_state(message: types.Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
-        return
+@router.message(EditText.edit_t3)
+async def edit_text_state(message: types.Message, state: FSMContext):
     data = await state.get_data()
+    button_code = data['button_code']
     ru_text = data['ru_text']
     en_text = message.text
-    await TranslationDB.add_admin_translation("FAQ", ru_text, en_text)
+    await TranslationDB.add_admin_translation(button_code, ru_text, en_text)
     await message.answer('Добавлено!\nТекст изменен.', reply_markup=admin_main_menu())
     await state.clear()
 
 
-@router.message(F.text == "Изменить 'Другие вопросы'")
-async def edit_other_issues(message: types.Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
-        return
-    await message.answer(f"Введите текст на русском языке:")
-    await state.set_state(UpdateOtherIssuesText.admin_text1)
-
-
-@router.message(UpdateOtherIssuesText.admin_text1)
-async def edit_other_issues_state(message: types.Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
-        return
-    await state.update_data(ru_text=message.text)
-    await message.answer('Добавлено!\nВведите текст на английском языке:')
-    await state.set_state(UpdateOtherIssuesText.admin_text2)
-
-
-@router.message(UpdateOtherIssuesText.admin_text2)
-async def edit_other_issues_state(message: types.Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
-        return
-    data = await state.get_data()
-    ru_text = data['ru_text']
-    en_text = message.text
-    await TranslationDB.add_admin_translation("other_issues", ru_text, en_text)
-    await message.answer('Добавлено!\nТекст изменен.', reply_markup=admin_main_menu())
-    await state.clear()
+# @router.message(F.text == "Изменить 'Другие вопросы'")
+# async def edit_other_issues(message: types.Message, state: FSMContext):
+#     if message.from_user.id != ADMIN_ID:
+#         return
+#     await message.answer(f"Введите текст на русском языке:", reply_markup=ReplyKeyboardRemove())
+#     await state.set_state(UpdateOtherIssuesText.admin_text1)
+#
+#
+# @router.message(UpdateOtherIssuesText.admin_text1)
+# async def edit_other_issues_state(message: types.Message, state: FSMContext):
+#     if message.from_user.id != ADMIN_ID:
+#         return
+#     await state.update_data(ru_text=message.text)
+#     await message.answer('Добавлено!\nВведите текст на английском языке:')
+#     await state.set_state(UpdateOtherIssuesText.admin_text2)
+#
+#
+# @router.message(UpdateOtherIssuesText.admin_text2)
+# async def edit_other_issues_state(message: types.Message, state: FSMContext):
+#     if message.from_user.id != ADMIN_ID:
+#         return
+#     data = await state.get_data()
+#     ru_text = data['ru_text']
+#     en_text = message.text
+#     await TranslationDB.add_admin_translation("other_issues", ru_text, en_text)
+#     await message.answer('Добавлено!\nТекст изменен.', reply_markup=admin_main_menu())
+#     await state.clear()
 
 
 

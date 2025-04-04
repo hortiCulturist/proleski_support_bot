@@ -57,11 +57,15 @@ async def set_language(message: types.Message):
 @router.message(lambda message: message.text in ["Главное меню", "Main menu"])
 async def main_menu(message: types.Message, state: FSMContext):
     await state.clear()
+    await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
+                         reply_markup=main_menu_keyboard(await TranslationDB.get_user_language_code(message.from_user.id)))
+
+
+@router.message(F.text == "Меню")
+async def admin_menu(message: types.Message):
     if message.from_user.id == config.ADMIN_ID:
         await message.answer("Привет! Я готов к работе босс.", reply_markup=admin_main_menu())
         return
-    await message.answer(await TranslationDB.get_translation(message.from_user.id, "start"),
-                         reply_markup=main_menu_keyboard(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
 @router.message(lambda message: message.text in ["☎️Связь с менеджером", "☎️Contact the manager"])

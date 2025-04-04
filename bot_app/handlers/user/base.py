@@ -3,20 +3,33 @@ from rapidfuzz import process
 
 from bot_app.db.admin.base import FAQDatabase
 from bot_app.db.translation_db import TranslationDB
-from bot_app.markups.user import back_and_support
+from bot_app.markups.user import back_and_support, go_to_main_manu
 from bot_app.misc import router
 
 
 @router.message(lambda message: message.text in ["Описание тренажёров", "Simulators description"])
-async def button_action(message: types.Message):
-    await message.answer("Здесь изменяемый текст 'Описание тренажёров'",
+async def button_simulator_description(message: types.Message):
+    await message.answer(await TranslationDB.get_admin_translation(message.from_user.id, "simulator_description"),
                          reply_markup=back_and_support(await TranslationDB.get_user_language_code(message.from_user.id)))
 
 
 @router.message(lambda message: message.text in ["Описание дополнительных опций", "Description of additional options"])
-async def button_action(message: types.Message):
-    await message.answer("Здесь изменяемый текст 'Описание дополнительных опций'",
+async def button_option_description(message: types.Message):
+    await message.answer(await TranslationDB.get_admin_translation(message.from_user.id, "option_description"),
                          reply_markup=back_and_support(await TranslationDB.get_user_language_code(message.from_user.id)))
+
+
+@router.message(F.text == "FAQ")
+async def button_faq(message: types.Message):
+    await message.answer(await TranslationDB.get_admin_translation(message.from_user.id, "FAQ"),
+                         reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))
+
+
+@router.message(lambda message: message.text in ["Другие вопросы", "Other questions"])
+async def button_faq(message: types.Message):
+    await message.answer(await TranslationDB.get_admin_translation(message.from_user.id, "other_issues"),
+                         reply_markup=go_to_main_manu(await TranslationDB.get_user_language_code(message.from_user.id)))
+
 
 
 @router.message(F.text)
@@ -59,3 +72,5 @@ async def answer_question_error(message: types.Message):
 #         await message.answer(FAQ[best_match])
 #     else:
 #         await message.answer("Извините, я не понял ваш вопрос. Попробуйте сформулировать иначе.")
+
+
