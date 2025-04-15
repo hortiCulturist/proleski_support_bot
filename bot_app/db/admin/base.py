@@ -3,7 +3,6 @@ import os
 from bot_app.config import FILES_PATH
 from bot_app.db.main import create_dict_con
 import pandas as pd
-from langdetect import detect
 
 
 class FAQDatabase:
@@ -66,77 +65,84 @@ class FAQDatabase:
         finally:
             await con.ensure_closed()
 
+    @staticmethod
+    async def get_question_by_id(faq_id: int) -> dict | None:
+        con, cur = await create_dict_con()
+        try:
+            await cur.execute("SELECT * FROM faq WHERE id = %s", (faq_id,))
+            result = await cur.fetchone()
+            return result
+        except Exception as e:
+            print(f"Ошибка при получении ответа по ID: {e}")
+        finally:
+            await con.ensure_closed()
+
 
 class ExcelOperation:
     @staticmethod
     async def add_xlsx_data(file_name: str):
-        """Добавление данных их загружаемого файла xlsx"""
+        # Подключение к БД
         con, cur = await create_dict_con()
         save_path = os.path.join(FILES_PATH, file_name)
+
+        # Загружаем Excel без заголовков
         df = pd.read_excel(save_path, header=None)
 
         result = []
 
+        # Собираем данные строк
         for row in df.itertuples(index=False, name=None):
             if all(pd.isna(cell) for cell in row):
-                break
-            result.append([str(cell) if pd.notna(cell) else None for cell in row[:4]])
+                break  # Пустая строка — конец данных
+            result.append([str(cell).strip() if pd.notna(cell) else "" for cell in row[:4]])
 
-        if result:
-            await cur.execute("DELETE FROM faq_questions")
-            await cur.execute("DELETE FROM faq")
+        if not result:
+            return False
+
+        # Чистим старые записи
+        await cur.execute("DELETE FROM faq_questions")
+        await cur.execute("DELETE FROM faq")
+        await con.commit()
+
+        for data in result:
+            raw_ru = data[0]
+            raw_en = data[1]
+            answer_ru = data[2]
+            answer_en = data[3]
+
+            # Разделяем вопросы по \n и удаляем пустые
+            questions_ru = [q.strip() for q in raw_ru.split('\n') if q.strip()]
+            questions_en = [q.strip() for q in raw_en.split('\n') if q.strip()]
+
+            # Если хотя бы с одной стороны нет вопросов — пропускаем строку
+            if not questions_ru or not questions_en:
+                print(f"Пропущена строка — пустые вопросы. RU: {questions_ru}, EN: {questions_en}")
+                continue
+
+            # Выравниваем количество вопросов (дублируем, если нужно)
+            max_len = max(len(questions_ru), len(questions_en))
+            if len(questions_ru) < max_len:
+                questions_ru *= max_len
+            if len(questions_en) < max_len:
+                questions_en *= max_len
+
+            # Вставляем ответ
+            await cur.execute("INSERT INTO faq (answer_ru, answer_en) VALUES (%s, %s)", (answer_ru, answer_en))
+            faq_id = cur.lastrowid
+
+            # Вставляем пары вопросов
+            questions = [(faq_id, q_ru, q_en) for q_ru, q_en in zip(questions_ru, questions_en)]
+            await cur.executemany(
+                "INSERT INTO faq_questions (faq_id, question_ru, question_en) VALUES (%s, %s, %s)",
+                questions
+            )
             await con.commit()
 
-            for data in result:
-                raw_questions_ru = data[0]
-                raw_questions_en = data[1]
-                answer_ru = data[2]
-                answer_en = data[3]
-
-                questions_ru = []
-                questions_en = []
-
-                for q in raw_questions_ru.split('\n'):
-                    try:
-                        if detect(q) == 'ru':
-                            questions_ru.append(q.strip())
-                    except Exception as e:
-                        print(f"Ошибка при определении языка RU: {q}. Ошибка: {e}")
-
-                for q in raw_questions_en.split('\n'):
-                    try:
-                        if detect(q) == 'en':
-                            questions_en.append(q.strip())
-                    except Exception as e:
-                        print(f"Ошибка при определении языка EN: {q}. Ошибка: {e}")
-
-                if not questions_ru or not questions_en:
-                    print(f"Пропущена строка — пустой список вопросов: RU: {questions_ru}, EN: {questions_en}")
-                    continue
-
-                max_len = max(len(questions_ru), len(questions_en))
-                if len(questions_ru) < max_len:
-                    questions_ru *= max_len
-                if len(questions_en) < max_len:
-                    questions_en *= max_len
-
-                await cur.execute("INSERT INTO faq (answer_ru, answer_en) VALUES (%s, %s)", (answer_ru, answer_en))
-                faq_id = cur.lastrowid
-
-                questions = [(faq_id, q_ru, q_en) for q_ru, q_en in zip(questions_ru, questions_en)]
-
-                await cur.executemany(
-                    "INSERT INTO faq_questions (faq_id, question_ru, question_en) VALUES (%s, %s, %s)",
-                    questions
-                )
-                await con.commit()
-
-            if os.path.exists(save_path):
-                os.remove(save_path)
-                print(f"Файл {file_name} был успешно удален.")
-            return True
-        else:
-            return False
+        # Удаляем файл после загрузки
+        if os.path.exists(save_path):
+            os.remove(save_path)
+            print(f"Файл {file_name} был успешно удален.")
+        return True
 
 
 # class ExcelOperation:

@@ -1,5 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
 
 def main_menu_keyboard(lang: str):
@@ -141,4 +140,12 @@ def language_choice(lang: str):
         input_field_placeholder=placeholders.get(lang)
     )
 
+    return keyboard
+
+
+def get_similar_questions_keyboard(matches: list[tuple[str, int]]) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=question.capitalize(), callback_data=f"faq:{faq_id}")]
+        for question, faq_id in matches
+    ])
     return keyboard
