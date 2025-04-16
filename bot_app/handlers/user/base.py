@@ -3,9 +3,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from rapidfuzz import process
 
+from bot_app.config import FAQ_TEMPLATES
 from bot_app.db.admin.base import FAQDatabase
 from bot_app.db.translation_db import TranslationDB
-from bot_app.markups.user import back_and_support, go_to_main_manu, get_similar_questions_keyboard
+from bot_app.markups.user import back_and_support, go_to_main_manu, get_numbered_questions_keyboard
 from bot_app.misc import router
 
 
@@ -37,40 +38,84 @@ async def button_faq(message: types.Message):
 @router.message(F.text)
 async def answer_question(message: types.Message):
     user_question = message.text.strip().lower()
-    rows = await FAQDatabase.get_all_questions()
+    user_lang = await TranslationDB.get_user_language_code(message.from_user.id)
 
-    question_answer_pairs = []
+    # Получаем вопросы на языке пользователя
+    rows = await FAQDatabase.get_faq_data_by_language(user_lang)
+    if not rows:
+        await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
+        return
 
-    for row in rows:
-        question_ru = row['question_ru'].strip().lower() if row['question_ru'] else ''
-        question_en = row['question_en'].strip().lower() if row['question_en'] else ''
-        answer_ru = row['answer_ru']
-        answer_en = row['answer_en']
-        faq_id = row['faq_id']  # убедись, что это поле возвращается из базы
+    # Создаем список вопросов для поиска с их ID
+    questions_with_ids = [(row['question'].strip().lower(), row['faq_id']) for row in rows]
+    questions = [q for q, _ in questions_with_ids]
 
-        if question_ru:
-            question_answer_pairs.append((question_ru, answer_ru, faq_id))
-        if question_en:
-            question_answer_pairs.append((question_en, answer_en, faq_id))
+    # Ищем похожие вопросы
+    matches_raw = process.extract(user_question, questions, limit=3, score_cutoff=70)
 
-    all_questions = [q for q, _, _ in question_answer_pairs]
+    if matches_raw:
+        templates = FAQ_TEMPLATES[user_lang]
+        message_text = templates['choose_question'] + "\n\n"
 
-    matches_raw = process.extract(user_question, all_questions, limit=3, score_cutoff=70)
+        matches = []
+        for i, (matched_question, score, _) in enumerate(matches_raw, 1):
+            # Конвертируем обычные цифры в эмодзи-цифры
+            number_emoji = f"{i}️⃣"
 
-    # Получаем список подходящих (вопрос, ответ, faq_id)
-    matches = []
-    for matched_question, score, _ in matches_raw:
-        for q_text, answer, faq_id in question_answer_pairs:
-            if q_text == matched_question:
-                matches.append((matched_question, faq_id))
-                break
+            # Находим faq_id для совпавшего вопроса
+            for q, faq_id in questions_with_ids:
+                if q == matched_question:
+                    matches.append((matched_question, faq_id))
+                    message_text += f"{number_emoji} {matched_question}\n"
+                    break
 
-    if matches:
-        await message.answer(await TranslationDB.get_translation(message.from_user.id, "сhoose_question"),
-            reply_markup=get_similar_questions_keyboard(matches))
+        message_text += templates['click_button']
+
+        await message.answer(
+            message_text,
+            reply_markup=get_numbered_questions_keyboard(matches)
+        )
         return
 
     await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
+
+# @router.message(F.text)
+# async def answer_question(message: types.Message):
+#     user_question = message.text.strip().lower()
+#     rows = await FAQDatabase.get_all_questions()
+#
+#     question_answer_pairs = []
+#
+#     for row in rows:
+#         question_ru = row['question_ru'].strip().lower() if row['question_ru'] else ''
+#         question_en = row['question_en'].strip().lower() if row['question_en'] else ''
+#         answer_ru = row['answer_ru']
+#         answer_en = row['answer_en']
+#         faq_id = row['faq_id']  # убедись, что это поле возвращается из базы
+#
+#         if question_ru:
+#             question_answer_pairs.append((question_ru, answer_ru, faq_id))
+#         if question_en:
+#             question_answer_pairs.append((question_en, answer_en, faq_id))
+#
+#     all_questions = [q for q, _, _ in question_answer_pairs]
+#
+#     matches_raw = process.extract(user_question, all_questions, limit=3, score_cutoff=70)
+#
+#     # Получаем список подходящих (вопрос, ответ, faq_id)
+#     matches = []
+#     for matched_question, score, _ in matches_raw:
+#         for q_text, answer, faq_id in question_answer_pairs:
+#             if q_text == matched_question:
+#                 matches.append((matched_question, faq_id))
+#                 break
+#
+#     if matches:
+#         await message.answer(await TranslationDB.get_translation(message.from_user.id, "сhoose_question"),
+#             reply_markup=get_similar_questions_keyboard(matches))
+#         return
+#
+#     await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
 
 
 @router.callback_query(F.data.startswith("faq:"))

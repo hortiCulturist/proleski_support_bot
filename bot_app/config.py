@@ -13,3 +13,15 @@ sections_mapping = {
     "FAQ": "FAQ",
     "Другие вопросы": "other_issues"
 }
+
+
+FAQ_TEMPLATES = {
+    'ru': {
+        'choose_question': '🔍 Возможно, вы имели в виду один из этих вопросов:',
+        'click_button': '\n👇Выберите номер подходящего вопроса'
+    },
+    'en': {
+        'choose_question': '🔍 You may have had one of these questions in mind:',
+        'click_button': '\n👇 Choose the number of the appropriate question'
+    }
+}

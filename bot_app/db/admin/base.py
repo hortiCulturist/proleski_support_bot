@@ -77,6 +77,35 @@ class FAQDatabase:
         finally:
             await con.ensure_closed()
 
+    @staticmethod
+    async def get_faq_data_by_language(lang: str, faq_id: int = None) -> list[dict] | None:
+        con, cur = await create_dict_con()
+        try:
+            query = f"""
+                SELECT 
+                    f.id as faq_id,
+                    f.answer_{lang} as answer,
+                    q.question_{lang} as question
+                FROM faq_questions q
+                JOIN faq f ON q.faq_id = f.id
+                WHERE q.question_{lang} IS NOT NULL
+            """
+
+            if faq_id is not None:
+                query += " AND q.faq_id = %s"
+                await cur.execute(query, (faq_id,))
+            else:
+                await cur.execute(query)
+
+            rows = await cur.fetchall()
+            return rows
+
+        except Exception as e:
+            print(f"Ошибка при получении FAQ на языке {lang}: {e}")
+            return None
+        finally:
+            await con.ensure_closed()
+
 
 class ExcelOperation:
     @staticmethod
@@ -143,6 +172,8 @@ class ExcelOperation:
             os.remove(save_path)
             print(f"Файл {file_name} был успешно удален.")
         return True
+
+
 
 
 # class ExcelOperation:

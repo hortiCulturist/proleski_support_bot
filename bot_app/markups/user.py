@@ -143,9 +143,9 @@ def language_choice(lang: str):
     return keyboard
 
 
-def get_similar_questions_keyboard(matches: list[tuple[str, int]]) -> InlineKeyboardMarkup:
+def get_numbered_questions_keyboard(matches: list[tuple[str, int]]) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=question.capitalize(), callback_data=f"faq:{faq_id}")]
-        for question, faq_id in matches
+        [InlineKeyboardButton(text=str(i), callback_data=f"faq:{faq_id}")
+         for i, (_, faq_id) in enumerate(matches, 1)]
     ])
     return keyboard
