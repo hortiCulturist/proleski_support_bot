@@ -135,6 +135,22 @@ class NeuralSearch:
         results.sort(key=lambda x: x[2], reverse=True)
         return results[:limit]
 
+    @staticmethod
+    async def update_embeddings():
+        """Обновляет кэшированные эмбеддинги для всех языков"""
+        print("Обновление нейросетевых эмбеддингов...")
+        # Очищаем кэш эмбеддингов
+        global cached_embeddings, faq_data
+        cached_embeddings = {}
+        faq_data = {}
+
+        # Загружаем эмбеддинги для обоих языков заново
+        await NeuralSearch.precompute_embeddings('ru')
+        await NeuralSearch.precompute_embeddings('en')
+
+        print("Обновление эмбеддингов успешно завершено!")
+        return True
+
 
 # Функция для тестирования
 async def test_neural_search():

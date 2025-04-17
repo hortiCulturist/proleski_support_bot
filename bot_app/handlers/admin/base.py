@@ -10,7 +10,7 @@ from bot_app.db.admin.base import FAQDatabase, ExcelOperation
 from bot_app.db.translation_db import TranslationDB
 from bot_app.markups.admin import admin_main_menu, faq_id_keyboard, admin_back_menu, edit_text_button
 from bot_app.misc import router, bot
-from bot_app.states.admin import AddFaq, DeleteFaq, AddXlsx, UpdateFaqText, UpdateOtherIssuesText, EditText
+from bot_app.states.admin import AddFaq, DeleteFaq, AddXlsx, EditText
 
 
 @router.message(F.text == "Добавить вопрос")
@@ -147,8 +147,14 @@ async def xlsx_data(message: types.Message, state: FSMContext):
 
         await message.answer(f"Файл <{file_name}> успешно загружен, идет обработка ✅")
         if await ExcelOperation.add_xlsx_data(file_name):
+            await message.answer("Данные успешно добавлены, обновляем нейросетевой поиск...")
+
+            # Добавляем обновление нейросетевых эмбеддингов
+            from bot_app.utils.neural_search import NeuralSearch
+            await NeuralSearch.update_embeddings()
+
             await asyncio.sleep(2)
-            await message.answer(f"Данные успешно обновлены ✅", reply_markup=admin_main_menu())
+            await message.answer(f"Данные и нейросетевой поиск успешно обновлены ✅", reply_markup=admin_main_menu())
         else:
             await message.answer(f"Ошибка❌")
         await state.clear()
