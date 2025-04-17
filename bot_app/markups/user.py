@@ -144,8 +144,17 @@ def language_choice(lang: str):
 
 
 def get_numbered_questions_keyboard(matches: list[tuple[str, int]]) -> InlineKeyboardMarkup:
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=str(i), callback_data=f"faq:{faq_id}")
-         for i, (_, faq_id) in enumerate(matches, 1)]
-    ])
+    # Создаем список кнопок
+    buttons = [
+        InlineKeyboardButton(text=str(i), callback_data=f"faq:{faq_id}")
+        for i, (_, faq_id) in enumerate(matches, 1)
+    ]
+
+    # Разбиваем кнопки на ряды по 3 в каждом
+    keyboard_rows = []
+    for i in range(0, len(buttons), 3):
+        row = buttons[i:i + 3]  # Берем до 3 кнопок для одного ряда
+        keyboard_rows.append(row)
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_rows)
     return keyboard

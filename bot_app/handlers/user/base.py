@@ -1,14 +1,16 @@
+import asyncio
+
 from aiogram import types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
-from rapidfuzz import process
 
 from bot_app.config import FAQ_TEMPLATES
 from bot_app.db.admin.base import FAQDatabase
 from bot_app.db.translation_db import TranslationDB
 from bot_app.markups.user import back_and_support, go_to_main_manu, get_numbered_questions_keyboard
 from bot_app.misc import router
-
+from bot_app.utils.neural_search import NeuralSearch
+from bot_app.utils.rate_limiter import check_rate_limit
 
 
 @router.message(lambda message: message.text in ["Описание тренажёров", "Simulators description"])
@@ -36,84 +38,126 @@ async def button_faq(message: types.Message):
 
 
 @router.message(F.text)
-async def answer_question(message: types.Message):
-    user_question = message.text.strip().lower()
+async def neural_answer_question(message: types.Message):
+    """Обрабатывает вопросы пользователя с помощью нейросетевого поиска"""
+    # Получаем язык пользователя
     user_lang = await TranslationDB.get_user_language_code(message.from_user.id)
 
-    # Получаем вопросы на языке пользователя
-    rows = await FAQDatabase.get_faq_data_by_language(user_lang)
-    if not rows:
-        await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
+    # Проверяем, не превышен ли лимит запросов
+    is_allowed, wait_seconds = await check_rate_limit(message.from_user.id)
+    if not is_allowed:
+        # Формируем сообщение об ограничении в зависимости от языка
+        if user_lang == "en":
+            limit_message = f"⚠️ **Rate limit exceeded**. Please wait {wait_seconds} seconds before sending your next question."
+        else:
+            limit_message = f"⚠️ **Превышен лимит запросов**. Пожалуйста, подождите {wait_seconds} секунд перед отправкой следующего вопроса."
+
+        await message.answer(limit_message, parse_mode="Markdown")
         return
 
-    # Создаем список вопросов для поиска с их ID
-    questions_with_ids = [(row['question'].strip().lower(), row['faq_id']) for row in rows]
-    questions = [q for q, _ in questions_with_ids]
+    # Получаем текст запроса пользователя
+    user_question = message.text.strip().lower()
 
-    # Ищем похожие вопросы
-    matches_raw = process.extract(user_question, questions, limit=3, score_cutoff=70)
+    # Добавляем индикатор, что используется нейросетевой поиск
+    await message.answer("🧠 *Используется нейросетевой поиск*...", parse_mode="Markdown")
+    await asyncio.sleep(2)
+
+    # Используем нейросетевой поиск для нахождения похожих вопросов
+    matches_raw = await NeuralSearch.find_similar_questions(
+        query=user_question,
+        lang=user_lang,
+        limit=6,
+        threshold=0.6  # Пороговое значение сходства
+    )
 
     if matches_raw:
         templates = FAQ_TEMPLATES[user_lang]
         message_text = templates['choose_question'] + "\n\n"
 
         matches = []
-        for i, (matched_question, score, _) in enumerate(matches_raw, 1):
-            # Конвертируем обычные цифры в эмодзи-цифры
+        for i, (matched_question, faq_id, score) in enumerate(matches_raw, 1):
             number_emoji = f"{i}️⃣"
-
-            # Находим faq_id для совпавшего вопроса
-            for q, faq_id in questions_with_ids:
-                if q == matched_question:
-                    matches.append((matched_question, faq_id))
-                    message_text += f"{number_emoji} {matched_question}\n"
-                    break
+            matches.append((matched_question, faq_id))
+            # Добавляем значение сходства для более понятного дебага
+            message_text += f"{number_emoji} {matched_question} (сходство: {score:.2f})\n"
 
         message_text += templates['click_button']
 
+        # Отправляем сообщение с найденными вопросами и клавиатурой
         await message.answer(
             message_text,
             reply_markup=get_numbered_questions_keyboard(matches)
         )
         return
 
+    # Если ничего не найдено, отправляем сообщение о непонимании
     await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
+
 
 # @router.message(F.text)
 # async def answer_question(message: types.Message):
-#     user_question = message.text.strip().lower()
-#     rows = await FAQDatabase.get_all_questions()
+#     # Очищаем запрос пользователя от знаков препинания
+#     user_question = PUNCTUATION_PATTERN.sub(' ', message.text.strip().lower())
+#     user_lang = await TranslationDB.get_user_language_code(message.from_user.id)
 #
-#     question_answer_pairs = []
-#
-#     for row in rows:
-#         question_ru = row['question_ru'].strip().lower() if row['question_ru'] else ''
-#         question_en = row['question_en'].strip().lower() if row['question_en'] else ''
-#         answer_ru = row['answer_ru']
-#         answer_en = row['answer_en']
-#         faq_id = row['faq_id']  # убедись, что это поле возвращается из базы
-#
-#         if question_ru:
-#             question_answer_pairs.append((question_ru, answer_ru, faq_id))
-#         if question_en:
-#             question_answer_pairs.append((question_en, answer_en, faq_id))
-#
-#     all_questions = [q for q, _, _ in question_answer_pairs]
-#
-#     matches_raw = process.extract(user_question, all_questions, limit=3, score_cutoff=70)
-#
-#     # Получаем список подходящих (вопрос, ответ, faq_id)
-#     matches = []
-#     for matched_question, score, _ in matches_raw:
-#         for q_text, answer, faq_id in question_answer_pairs:
-#             if q_text == matched_question:
-#                 matches.append((matched_question, faq_id))
-#                 break
-#
-#     if matches:
-#         await message.answer(await TranslationDB.get_translation(message.from_user.id, "сhoose_question"),
-#             reply_markup=get_similar_questions_keyboard(matches))
+#     # Получаем вопросы на языке пользователя
+#     rows = await FAQDatabase.get_faq_data_by_language(user_lang)
+#     if not rows:
+#         await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
 #         return
+#
+#     # Расширяем запрос пользователя с лемматизацией
+#     expanded_query_words = expand_query(user_question)
+#
+#     # Создаем список вопросов для поиска с их ID
+#     questions_with_ids = []
+#     for row in rows:
+#         # Нормализуем каждый вопрос так же, как и запрос пользователя
+#         question_text = row['question'].strip().lower()
+#         # Очищаем вопрос от знаков препинания для сравнения
+#         clean_question = PUNCTUATION_PATTERN.sub(' ', question_text)
+#         question_words = set(clean_question.split())
+#         normalized_words = {normalize_word(word) for word in question_words if word}
+#
+#         questions_with_ids.append((question_text, normalized_words, row['faq_id']))
+#
+#     # Фильтруем вопросы, которые содержат хотя бы одно слово из расширенного запроса
+#     filtered_questions = []
+#     for q_text, q_norm_words, faq_id in questions_with_ids:
+#         # Проверяем пересечение множеств слов
+#         if expanded_query_words.intersection(q_norm_words):
+#             filtered_questions.append((q_text, faq_id))
+#
+#     # Если есть отфильтрованные вопросы, используем нечеткий поиск для них
+#     if filtered_questions:
+#         questions = [q for q, _ in filtered_questions]
+#
+#         from rapidfuzz import process
+#         # Понижаем порог оценки до 60, чтобы захватить больше потенциальных совпадений
+#         matches_raw = process.extract(user_question, questions, limit=6, score_cutoff=60)
+#
+#         if matches_raw:
+#             templates = FAQ_TEMPLATES[user_lang]
+#             message_text = templates['choose_question'] + "\n\n"
+#
+#             matches = []
+#             for i, (matched_question, score, _) in enumerate(matches_raw, 1):
+#                 number_emoji = f"{i}️⃣"
+#
+#                 # Находим faq_id для совпавшего вопроса
+#                 for q, faq_id in filtered_questions:
+#                     if q == matched_question:
+#                         matches.append((matched_question, faq_id))
+#                         message_text += f"{number_emoji} {matched_question}\n"
+#                         break
+#
+#             message_text += templates['click_button']
+#
+#             await message.answer(
+#                 message_text,
+#                 reply_markup=get_numbered_questions_keyboard(matches)
+#             )
+#             return
 #
 #     await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
 
@@ -147,60 +191,7 @@ async def handle_faq_callback(callback: CallbackQuery, state: FSMContext):
         print(f"Callback error: {e}")
 
 
-    # # Используем fuzzy-поиск с порогом 70
-    # match = process.extractOne(user_question, all_questions, score_cutoff=70)
-
-
-    # if match:
-    #     matched_question = match[0]
-    #     # Находим соответствующий ответ
-    #     for question, answer in question_answer_pairs:
-    #         if question == matched_question:
-    #             await message.answer(answer)
-    #             return
-    #
-    # # Если ничего не нашли
-    # await message.answer(await TranslationDB.get_translation(message.from_user.id, "question_not_understood"))
-
-# @router.message(F.text)
-# async def answer_question(message: types.Message):
-#     user_question = message.text.strip().lower()
-#
-#     rows = await FAQDatabase.get_all_questions()
-#
-#     faq_dict = {
-#         row['question_ru'].lower(): row for row in rows
-#     }
-#     faq_dict.update({
-#         row['question_en'].lower(): row for row in rows
-#     })
-#
-#     result = process.extractOne(user_question, faq_dict.keys(), score_cutoff=70)
-#
-#     if result:
-#         best_match = faq_dict[result[0]]
-#         if result[0] in faq_dict and best_match['question_ru'].lower() == result[0]:
-#             await message.answer(best_match['answer_ru'])
-#         elif result[0] in faq_dict and best_match['question_en'].lower() == result[0]:
-#             await message.answer(best_match['answer_en'])
-#     else:
-#         await message.answer(await TranslationDB.get_translation(message.from_user.id,
-#                                                                  "question_not_understood"))
-
-
 @router.message(~F.text)
 async def answer_question_error(message: types.Message):
     pass
-# @router.message()
-# async def answer_question(message: types.Message):
-#     user_question = message.text.strip().lower()
-#
-#     result = process.extractOne(user_question, FAQ.keys(), score_cutoff=70)
-#
-#     if result:
-#         best_match, score, _ = result
-#         await message.answer(FAQ[best_match])
-#     else:
-#         await message.answer("Извините, я не понял ваш вопрос. Попробуйте сформулировать иначе.")
-
 
